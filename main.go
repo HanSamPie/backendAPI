@@ -61,7 +61,7 @@ type GameOver struct {
 	} `json:"position"`
 }
 
-func submitData(w http.ResponseWriter, r *http.Request) {
+func saveData(w http.ResponseWriter, r *http.Request) {
 	var data Metrics
 	err := json.NewDecoder(r.Body).Decode(&data)
 	if err != nil {
@@ -82,12 +82,14 @@ func submitData(w http.ResponseWriter, r *http.Request) {
 	// 	log.Fatalf("Failed to add data: %v", err)
 	// }
 
+	// Here, save the data to a file or database
+	log.Printf("Received data: %+v\n", data)
 	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode("Data received successfully")
 }
 
 func main() {
 	r := mux.NewRouter()
-	r.HandleFunc("/submit", submitData).Methods("POST")
+	r.HandleFunc("/submit", saveData).Methods("POST")
+	log.Println("Server started on :8080")
 	log.Fatal(http.ListenAndServe(":8080", r))
 }
