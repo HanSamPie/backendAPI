@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 )
 
@@ -89,6 +90,16 @@ func saveData(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 	r := mux.NewRouter()
+
+	//CORS
+	cors := handlers.CORS(
+		handlers.AllowedOrigins([]string{"*"}),
+		handlers.AllowedMethods([]string{"GET", "OPTIONS"}),
+		handlers.AllowedHeaders([]string{"Content-Type", "Authorization"}),
+	)
+
+	http.Handle("/", cors(r))
+
 	r.HandleFunc("/submit", saveData).Methods("POST")
 	log.Println("Server started on :8080")
 	log.Fatal(http.ListenAndServe(":8080", r))
